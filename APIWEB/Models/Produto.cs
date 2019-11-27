@@ -13,5 +13,7 @@ namespace APIWEB.Models
         public string ImagemUrl { get; set; }
         public float Estoque { get; set; }
         public DateTime DataCadastro { get; set; }
+        public Categoria Categoria { get; set; }
+        public int CategoriaId { get; set; }
     }
 }
