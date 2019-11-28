@@ -14,7 +14,11 @@ namespace APIWEB.Models
 
         [Key]
         public int CategoriaId { get; set; }
+        [Required(ErrorMessage = "Preenchimento Obrigatório.")]
+        [MaxLength(80)]
         public string Nome { get; set; }
+        [Required(ErrorMessage = "Preenchimento Obrigatório.")]
+        [MaxLength(300)]
         public string ImagemUrl { get; set; }
         public ICollection<Produto> Produtos { get; set; }
     }
