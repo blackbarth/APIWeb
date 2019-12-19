@@ -1,5 +1,6 @@
 ﻿using APIWEB.Models;
 using APIWEB.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -8,6 +9,8 @@ using System.Linq;
 
 namespace APIWEB.Controllers
 {
+
+    [Authorize(AuthenticationSchemes ="Bearer")]
     [Route("api/[Controller]")]
     [ApiController]
     public class CategoriasController : ControllerBase

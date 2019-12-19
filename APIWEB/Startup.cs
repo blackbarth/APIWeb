@@ -10,6 +10,10 @@ using APIWEB.Extensions;
 using Microsoft.Extensions.Logging;
 using APIWEB.Logging;
 using APIWEB.Repository;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
 
 namespace APIWEB
 {
@@ -31,6 +35,32 @@ namespace APIWEB
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddDbContext<APPDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+
+            ///Implementar Identity
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<APPDBContext>()
+                .AddDefaultTokenProviders();
+
+
+            //JWT
+            //adiciona o manipulador de autenticacao e define o 
+            //esquema de autenticacao usado : Bearer
+            //valida o emissor, a audiencia e a chave
+            //usando a chave secreta valida a assinatura
+            services.AddAuthentication(
+                JwtBearerDefaults.AuthenticationScheme).
+                AddJwtBearer(options => options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidAudience = Configuration["TokenConfiguration:Audience"],
+                    ValidIssuer = Configuration["TokenConfiguration:Issuer"],
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(Configuration["Jwt:key"]))
+                });
 
             //Microsoft.AspNetCore.Mvc.NewtonsoftJson
             services.AddControllers()
@@ -57,6 +87,9 @@ namespace APIWEB
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            //incluir middleware de autorizacao
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
