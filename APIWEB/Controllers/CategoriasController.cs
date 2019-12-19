@@ -2,6 +2,8 @@
 using APIWEB.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +16,14 @@ namespace APIWEB.Controllers
     public class CategoriasController : ControllerBase
     {
         private readonly APPDBContext _context;
-        public CategoriasController(APPDBContext contexto)
+        private readonly IConfiguration _configuration;
+        private readonly ILogger _logger;
+
+        public CategoriasController(APPDBContext contexto, IConfiguration configuration, ILogger<CategoriasController> logger)
         {
             _context = contexto;
+            _configuration = configuration;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -26,18 +33,33 @@ namespace APIWEB.Controllers
         }
 
 
+        [HttpGet("autor")]
+        public string GetAutor()
+        {
+            var autor = _configuration["autor"];
+            var conexao = _configuration["ConnectionStrings:DefaultConnection"];
+            return $"Autor : {autor} Conexao: {conexao}";
+        }
+
 
         [HttpGet("Produtos")]
         public ActionResult<ICollection<Categoria>> GetCategoriasProdutos()
         {
+            _logger.LogInformation("========================== GET api/categorias/produtos ===============================");
             return _context.Categorias.Include(p => p.Produtos).ToList();
         }
 
         [HttpGet("{id}", Name = "ObterCategoria")]
         public ActionResult<Categoria> Get(int id)
         {
+
             var categoria = _context.Categorias.AsNoTracking().FirstOrDefault(p => p.CategoriaId == id);
-            if (categoria == null) return BadRequest();
+            _logger.LogInformation($"========================== GET api/categorias/id = {id} ===============================");
+            if (categoria == null)
+            {
+                _logger.LogInformation($"========================== GET api/categorias/id = {id} NOT FOUND ===============================");
+                return BadRequest();
+            }
 
             return categoria;
         }

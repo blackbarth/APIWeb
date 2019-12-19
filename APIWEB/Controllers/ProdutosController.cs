@@ -1,4 +1,5 @@
 ﻿using APIWEB.Context;
+using APIWEB.Filters;
 using APIWEB.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,12 @@ namespace APIWEB.Controllers
         }
 
 
+        /// <summary>
+        /// Aplicaçao de filter
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
+        [ServiceFilter(typeof(ApiLoggingFilter))]
         public async Task<ActionResult<IEnumerable<Produto>>> GetAsync()
         {
             return await _context.Produtos.AsNoTracking().ToListAsync();

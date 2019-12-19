@@ -50,4 +50,4 @@ C:\Projetos\APIWEB\APIWEB\bin\Debug\netcoreapp3.0\Microsoft.AspNetCore.JsonPatch
 C:\Projetos\APIWEB\APIWEB\bin\Debug\netcoreapp3.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
 C:\Projetos\APIWEB\APIWEB\bin\Debug\netcoreapp3.0\Newtonsoft.Json.dll
 C:\Projetos\APIWEB\APIWEB\bin\Debug\netcoreapp3.0\Newtonsoft.Json.Bson.dll
-C:\Projetos\APIWEB\APIWEB\obj\Debug\netcoreapp3.0\APIWEB.MvcApplicationPartsAssemblyInfo.cache
+C:\Projetos\APIWeb\APIWEB\obj\Debug\netcoreapp3.0\APIWEB.MvcApplicationPartsAssemblyInfo.cache
