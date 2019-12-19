@@ -1,12 +1,9 @@
-﻿using APIWEB.Context;
-using APIWEB.Filters;
+﻿using APIWEB.Filters;
 using APIWEB.Models;
+using APIWEB.Repository;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace APIWEB.Controllers
 {
@@ -14,22 +11,27 @@ namespace APIWEB.Controllers
     [ApiController]
     public class ProdutosController : ControllerBase
     {
-        private readonly APPDBContext _context;
-        public ProdutosController(APPDBContext contexto)
+        private readonly IUnitOfWork _uof;
+        public ProdutosController(IUnitOfWork contexto)
         {
-            _context = contexto;
+            _uof = contexto;
         }
 
 
+        [HttpGet("menorpreco")]
+        public ActionResult<IEnumerable<Produto>> GetProdutosPreco()
+        {
+            return _uof.ProdutoRepository.GetProdutosPorPreco().ToList();
+        }
         /// <summary>
         /// Aplicaçao de filter
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [ServiceFilter(typeof(ApiLoggingFilter))]
-        public async Task<ActionResult<IEnumerable<Produto>>> GetAsync()
+        public ActionResult<IEnumerable<Produto>> Get()
         {
-            return await _context.Produtos.AsNoTracking().ToListAsync();
+            return _uof.ProdutoRepository.Get().ToList();
         }
 
 
@@ -40,18 +42,18 @@ namespace APIWEB.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id:int:min(1)}", Name = "ObterProduto")]
-        public async Task<ActionResult<Produto>> GetAsync(int id)
+        public ActionResult<Produto> Get(int id)
         {
-            var produto = _context.Produtos.AsNoTracking().FirstOrDefaultAsync(p => p.ProdutoId == id);
+            var produto = _uof.ProdutoRepository.GetById(p => p.ProdutoId == id);
             if (produto == null) return NotFound();
-            return await produto;
+            return produto;
         }
 
         [HttpPost]
         public ActionResult Post([FromBody]Produto produto)
         {
-            _context.Add(produto);
-            _context.SaveChanges();
+            _uof.ProdutoRepository.Add(produto);
+            _uof.Commit();
             return new CreatedAtRouteResult("ObterProduto", new { id = produto.ProdutoId }, produto);
 
         }
@@ -61,18 +63,18 @@ namespace APIWEB.Controllers
         {
             if (id != produto.ProdutoId) return BadRequest();
 
-            _context.Entry(produto).State = EntityState.Modified;
-            _context.SaveChanges();
+            _uof.ProdutoRepository.Update(produto);
+            _uof.Commit();
             return Ok();
         }
 
         [HttpDelete("{id}")]
         public ActionResult<Produto> Delete(int id)
         {
-            var produto = _context.Produtos.AsNoTracking().FirstOrDefault(p => p.ProdutoId == id);
+            var produto = _uof.ProdutoRepository.GetById(p => p.ProdutoId == id);
             if (produto == null) return NotFound();
-            _context.Produtos.Remove(produto);
-            _context.SaveChanges();
+            _uof.ProdutoRepository.Delete(produto);
+            _uof.Commit();
             return produto;
 
         }

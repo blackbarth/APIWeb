@@ -1,13 +1,10 @@
-﻿using APIWEB.Context;
-using APIWEB.Models;
+﻿using APIWEB.Models;
+using APIWEB.Repository;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace APIWEB.Controllers
 {
@@ -15,21 +12,28 @@ namespace APIWEB.Controllers
     [ApiController]
     public class CategoriasController : ControllerBase
     {
-        private readonly APPDBContext _context;
+
+        private readonly IUnitOfWork _uof;
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
 
-        public CategoriasController(APPDBContext contexto, IConfiguration configuration, ILogger<CategoriasController> logger)
+        public CategoriasController(IUnitOfWork contexto, IConfiguration configuration, ILogger<CategoriasController> logger)
         {
-            _context = contexto;
+            _uof = contexto;
             _configuration = configuration;
             _logger = logger;
+        }
+
+        [HttpGet("produtos")]
+        public ActionResult<IEnumerable<Categoria>> GetCategoriasProdutos()
+        {
+            return _uof.CategoriaRepository.GetCategoriasProdutos().ToList();
         }
 
         [HttpGet]
         public ActionResult<ICollection<Categoria>> Get()
         {
-            return _context.Categorias.AsNoTracking().ToList();
+            return _uof.CategoriaRepository.Get().ToList();
         }
 
 
@@ -42,18 +46,18 @@ namespace APIWEB.Controllers
         }
 
 
-        [HttpGet("Produtos")]
-        public ActionResult<ICollection<Categoria>> GetCategoriasProdutos()
+        [HttpGet("produtos")]
+        public ActionResult<IEnumerable<Categoria>> GetCategoriaProdutos()
         {
             _logger.LogInformation("========================== GET api/categorias/produtos ===============================");
-            return _context.Categorias.Include(p => p.Produtos).ToList();
+            return _uof.CategoriaRepository.GetCategoriasProdutos().ToList();
         }
 
         [HttpGet("{id}", Name = "ObterCategoria")]
         public ActionResult<Categoria> Get(int id)
         {
 
-            var categoria = _context.Categorias.AsNoTracking().FirstOrDefault(p => p.CategoriaId == id);
+            var categoria = _uof.CategoriaRepository.GetById(p => p.CategoriaId == id);
             _logger.LogInformation($"========================== GET api/categorias/id = {id} ===============================");
             if (categoria == null)
             {
@@ -67,8 +71,8 @@ namespace APIWEB.Controllers
         [HttpPost]
         public ActionResult<Categoria> Post([FromBody]Categoria categoria)
         {
-            _context.Categorias.Add(categoria);
-            _context.SaveChanges();
+            _uof.CategoriaRepository.Add(categoria);
+            _uof.Commit();
             return new CreatedAtRouteResult("ObterCategoria", new { id = categoria.CategoriaId }, categoria);
         }
 
@@ -77,19 +81,19 @@ namespace APIWEB.Controllers
         {
             if (id != categoria.CategoriaId) return BadRequest();
 
-            _context.Entry(categoria).State = EntityState.Modified;
-            _context.SaveChanges();
+            _uof.CategoriaRepository.Update(categoria);
+            _uof.Commit();
             return Ok();
         }
 
         [HttpDelete("{id}")]
         public ActionResult<Categoria> Delete(int id)
         {
-            var categoria = _context.Categorias.FirstOrDefault(p => p.CategoriaId == id);
+            var categoria = _uof.CategoriaRepository.GetById(p => p.CategoriaId == id);
             if (categoria == null) return BadRequest();
 
-            _context.Remove(categoria);
-            _context.SaveChanges();
+            _uof.CategoriaRepository.Delete(categoria);
+            _uof.Commit();
             return categoria;
         }
     }
