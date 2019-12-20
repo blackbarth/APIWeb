@@ -30,6 +30,20 @@ namespace APIWEB
         public void ConfigureServices(IServiceCollection services)
         {
 
+            //Habilitar cors com configuraçao no configure()
+            //configuraçao #01
+            services.AddCors();
+
+            //habilitar cors com configuracao aqui com os atributos
+            //configuraçao #02
+            //services.AddCors(options =>
+            //{
+            //    options.AddPolicy("PermitirApiRequest",
+            //        builder => builder.WithOrigins("http://www.apirequest.io")
+            //        .WithMethods("GET"));
+            //});
+
+
             services.AddScoped<ApiLoggingFilter>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -92,6 +106,19 @@ namespace APIWEB
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            //habilitar configuraçao do CORS
+            //configuraçao #01
+            app.UseCors(options => options.AllowAnyOrigin()
+            .AllowAnyMethod());
+
+
+            //habilitar configura do CORS
+            //configuracao #02
+            //app.UseCors();
+
+
+            //app.UseCors(options => options.WithOrigins("http://www.apirequest.io"));
 
             app.UseEndpoints(endpoints =>
             {

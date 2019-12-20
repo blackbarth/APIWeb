@@ -1,6 +1,7 @@
 ﻿using APIWEB.Models;
 using APIWEB.Repository;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -13,6 +14,7 @@ namespace APIWEB.Controllers
     [Authorize(AuthenticationSchemes ="Bearer")]
     [Route("api/[Controller]")]
     [ApiController]
+    //[EnableCors("PermitirApiRequest")] //configuracao #02
     public class CategoriasController : ControllerBase
     {
 
