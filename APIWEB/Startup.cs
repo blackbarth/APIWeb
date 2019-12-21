@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 
 namespace APIWEB
 {
@@ -43,6 +45,25 @@ namespace APIWEB
             //        .WithMethods("GET"));
             //});
 
+
+
+            //configuraçao da versionamento
+            //services.AddApiVersioning(options =>
+            //{
+            //    options.AssumeDefaultVersionWhenUnspecified = true; // assume a versao padrao quando nenhuma versao for informada
+            //    options.DefaultApiVersion = new ApiVersion(1,0); //define a versao padrao é 1.0
+            //    options.ReportApiVersions = true; //permite informar no response do request a informaçao de compactibilidade da versao
+
+            //});
+
+            services.AddApiVersioning(options => 
+            {
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.ReportApiVersions = true;
+                options.ApiVersionReader = new HeaderApiVersionReader("x-api-version"); //exibir no header da api
+
+            });
 
             services.AddScoped<ApiLoggingFilter>();
 

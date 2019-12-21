@@ -130,4 +130,7 @@ C:\Projetos\APIWEB\APIWEB\bin\Debug\netcoreapp3.0\System.IdentityModel.Tokens.Jw
 C:\Projetos\APIWEB\APIWEB\bin\Debug\netcoreapp3.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Projetos\APIWEB\APIWEB\bin\Debug\netcoreapp3.0\Microsoft.IdentityModel.Protocols.dll
 C:\Projetos\APIWEB\APIWEB\bin\Debug\netcoreapp3.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Projetos\APIWEB\APIWEB\bin\Debug\netcoreapp3.0\Microsoft.AspNetCore.Mvc.Versioning.dll
+C:\Projetos\APIWEB\APIWEB\bin\Debug\netcoreapp3.0\Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer.dll
+C:\Projetos\APIWEB\APIWEB\obj\Debug\netcoreapp3.0\APIWEB.MvcApplicationPartsAssemblyInfo.cs
 C:\Projetos\APIWEB\APIWEB\obj\Debug\netcoreapp3.0\APIWEB.MvcApplicationPartsAssemblyInfo.cache
