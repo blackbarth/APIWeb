@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace APIWEB.Controllers
 {
+    [Produces("application/json")] //define formato padrao da api como json
     [Route("api/[controller]")]
     [ApiController]
     public class AutorizaController : ControllerBase
@@ -33,6 +34,12 @@ namespace APIWEB.Controllers
             return "AutorizaController :: Acessado em : " + DateTime.Now.ToLongDateString();
         }
 
+
+        /// <summary>
+        /// Registra um novo usuario
+        /// </summary>
+        /// <param name="model">Um objeto UsuarioDTO</param>
+        /// <returns>Status e o token para cliente</returns>
         [HttpPost("register")]
         public async Task<ActionResult> RegisterUser([FromBody]UsuarioDTO model)
         {
@@ -59,7 +66,14 @@ namespace APIWEB.Controllers
             return Ok(GeraToken(model));
         }
 
-        [HttpPost("login")]
+
+        /// <summary>
+        /// Verifica as credenciais de um usuario
+        /// </summary>
+        /// <param name="userInfo">Um objeto do tipo UsuarioDTO</param>
+        /// <remarks>retorna o Status 200 e o token para novo acesso </remarks>
+        /// <returns>Status 200 e token para cliente </returns>
+        [HttpPost("login")] 
         public async Task<ActionResult> Login([FromBody]UsuarioDTO userInfo)
         {
             var result = await _signInManager.PasswordSignInAsync(userInfo.Email, userInfo.Password, isPersistent: false, lockoutOnFailure: false);
@@ -102,13 +116,15 @@ namespace APIWEB.Controllers
                 claims: claims,
                 expires: expiration,
                 signingCredentials: credenciais);
-            return new UsuarioToken()
+            var usuarioToken = new UsuarioToken()
             {
-                Autenticated = true,
+                Authenticated = true,
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
                 Expiration = expiration,
                 Message = "Token JWT OK"
             };
+
+            return usuarioToken;
         }
     }
 }

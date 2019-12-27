@@ -16,6 +16,18 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
+//using Microsoft.OpenApi.Models;
+using System;
+
+using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
+using System.IO;
+using AutoMapper;
+using APIWEB.DTOs.Mappings;
+using System.Collections.Generic;
+using Microsoft.AspNet.OData.Extensions;
+using APIWEB.GraphQL;
 
 namespace APIWEB
 {
@@ -31,6 +43,18 @@ namespace APIWEB
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            //aplicando AutoMapper
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
+
+
 
             //Habilitar cors com configuraçao no configure()
             //configuraçao #01
@@ -56,7 +80,7 @@ namespace APIWEB
 
             //});
 
-            services.AddApiVersioning(options => 
+            services.AddApiVersioning(options =>
             {
                 options.AssumeDefaultVersionWhenUnspecified = true;
                 options.DefaultApiVersion = new ApiVersion(1, 0);
@@ -97,6 +121,107 @@ namespace APIWEB
                     Encoding.UTF8.GetBytes(Configuration["Jwt:key"]))
                 });
 
+            //habilitar odata
+            //services.AddOData();
+
+
+            //swagger
+            //services.AddSwaggerGen(c =>
+            //{
+            //    c.SwaggerDoc("v1", new Info
+            //    {
+            //        Version = "v1",
+            //        Title = "APIWEB",
+            //        Description = "Catálogo de Produtos e Categorias",
+            //        TermsOfService = @"https://www.maximizi.com.br/terms",
+            //        Contact = new Contact
+            //        {
+            //            Name = "Luis Augusto Ferreira",
+            //            Email = "blackbarth@outlook.com",
+            //            Url = @"https://www.maximizi.com.br",
+            //        },
+            //        License = new License
+            //        {
+            //            Name = "Usar sobre LICX",
+            //            Url = @"https://www.maximizi.com.br/licence",
+            //        }
+            //    });
+            //});
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "APIWEB",
+                    Description = "Catálogo de Produtos e Categorias",
+                    TermsOfService = new Uri(@"https://www.maximizi.com.br/terms"),
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Luis Augusto Ferreira",
+                        Email = "blackbarth@outlook.com",
+                        Url = new Uri(@"https://www.maximizi.com.br"),
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "Usar sobre LICX",
+                        Url = new Uri(@"https://www.maximizi.com.br/licence"),
+                    }
+                });
+
+                //preparacao para leitura de documento xml
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+
+
+
+                //Habilita filter para autorizacao swagger
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Por favor inserir 'Bearer '+ token no campo",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                      {
+                        new OpenApiSecurityScheme
+                        {
+                          Reference = new OpenApiReference
+                          {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                          }
+                         },
+                         new string[] { }
+                       }
+                 });
+
+
+
+                //Habilita filter para autorizacao swagger
+                //c.OperationFilter<SwaggerAuthorizationOperationFilter>();
+
+                //Habilitando autenticaçao no swagger
+                //var security = new Dictionary<string, IEnumerable<string>>
+                //{
+                //    {"Bearer",new string[]{} },
+                //};
+                //c.AddSecurityDefinition(
+                //    "Bearer",
+                //    new ApiKeyScheme { 
+                //    In = "header",
+                //    ApiDescriptionActionData = "Copiar 'bearer ' + token",
+                //    Name = "Authorization",
+                //    Type = "apiKey"
+                //    });
+                //c.AddSecurityRequirement(security);
+
+
+            });
+
+
             //Microsoft.AspNetCore.Mvc.NewtonsoftJson
             services.AddControllers()
                 .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
@@ -128,11 +253,28 @@ namespace APIWEB
 
             app.UseAuthorization();
 
+
+            //swagger
+            //habilitar middleware
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Catalogo de Produtos e Categorias");
+            });
+
+
             //habilitar configuraçao do CORS
             //configuraçao #01
             app.UseCors(options => options.AllowAnyOrigin()
             .AllowAnyMethod());
 
+
+            //habilitar oData
+            //app.UseMvc(options => {
+            //    options.EnableDependencyInjection();
+            //    options.Expand().Select().Count().OrderBy().Filter();
+            //});
 
             //habilitar configura do CORS
             //configuracao #02
@@ -140,6 +282,10 @@ namespace APIWEB
 
 
             //app.UseCors(options => options.WithOrigins("http://www.apirequest.io"));
+
+
+            //habilitando graphql
+            app.UseMiddleware<TesteGraphQLMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
