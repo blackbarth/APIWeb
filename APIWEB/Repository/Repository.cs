@@ -1,9 +1,9 @@
 ﻿using APIWEB.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-
 namespace APIWEB.Repository
 {
     public class Repository<T> : IRepository<T> where T : class
@@ -38,6 +38,18 @@ namespace APIWEB.Repository
         {
             _context.Entry(entity).State = EntityState.Modified;
             _context.Set<T>().Update(entity);
+        }
+
+        public List<T> LocalizaPagina<Tipo>(int numeroPagina, int quantidadeRegistro) where Tipo : class
+        {
+            return _context.Set<T>()
+                .Skip(quantidadeRegistro * (numeroPagina - 1))
+                .Take(quantidadeRegistro).ToList();
+        }
+
+        public int GetTotalRegistros()
+        {
+            return _context.Set<T>().AsNoTracking().Count();
         }
     }
 }

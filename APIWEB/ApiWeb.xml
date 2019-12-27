@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>APIWEB</name>
+    </assembly>
+    <members>
+        <member name="M:APIWEB.Controllers.AutorizaController.RegisterUser(APIWEB.DTOs.UsuarioDTO)">
+            <summary>
+            Registra um novo usuario
+            </summary>
+            <param name="model">Um objeto UsuarioDTO</param>
+            <returns>Status e o token para cliente</returns>
+        </member>
+        <member name="M:APIWEB.Controllers.AutorizaController.Login(APIWEB.DTOs.UsuarioDTO)">
+            <summary>
+            Verifica as credenciais de um usuario
+            </summary>
+            <param name="userInfo">Um objeto do tipo UsuarioDTO</param>
+            <remarks>retorna o Status 200 e o token para novo acesso </remarks>
+            <returns>Status 200 e token para cliente </returns>
+        </member>
+        <member name="M:APIWEB.Controllers.CategoriasController.Get(System.Int32)">
+            <summary>
+            Obtem uma categoria pelo seu Id
+            </summary>
+            <param name="id">Codigo da Categoria</param>
+            <returns>Objeto Categoria</returns>
+        </member>
+        <member name="M:APIWEB.Controllers.CategoriasController.Post(APIWEB.DTOs.CategoriaDTO)">
+            <summary>
+            Inclui uma nova categoria
+            </summary>
+            <remarks>
+            Exemplo de request:
+            
+              POST api/categorias
+              {
+                "categoriaId": 1,
+                "nome": "categoria1",
+                "imagemUrl": "http://teste.com.br/imagem.jpg"
+              }
+            </remarks>
+            <param name="categoria">Objeto da categoria</param>
+            <returns>O objeto Categoria incluido</returns>
+        </member>
+        <member name="M:APIWEB.Controllers.ProdutosController.Get">
+            <summary>
+            Exibe a relaçao de produtos
+            </summary>
+            <returns>Retorna uma lista de objetos Produto</returns>
+        </member>
+        <member name="M:APIWEB.Controllers.ProdutosController.Get(System.Int32)">
+            <summary>
+            Obter um produto po seu identificador produtoId
+            </summary>
+            <param name="id">Codigo do produto</param>
+            <returns>Objeto Produto</returns>
+        </member>
+        <member name="M:APIWEB.Filters.ApiLoggingFilter.OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext)">
+            <summary>
+            Executa antes da action
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="M:APIWEB.Filters.ApiLoggingFilter.OnActionExecuted(Microsoft.AspNetCore.Mvc.Filters.ActionExecutedContext)">
+            <summary>
+            Executa depois da action
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="T:APIWEB.GraphQL.CategoriaType">
+            <summary>
+            Qual entidade sera mapeada para nosso Type
+            </summary>
+        </member>
+    </members>
+</doc>
