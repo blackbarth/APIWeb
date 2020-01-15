@@ -21,6 +21,8 @@ namespace APIWEB
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.UseIISIntegration(); //habilita iis para porta 80
+
                 });
     }
 }
