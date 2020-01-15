@@ -11,7 +11,8 @@ Microsoft.Extensions.Logging
 
 
 Criar Pasta Models
-<img src=”img/fig-pasta-models.png”>
+
+<img src=img/fig-pasta-models.png>
 
 Criar as classes categoria e produto
  
